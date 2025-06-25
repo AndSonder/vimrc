@@ -56,15 +56,24 @@ require'lspconfig'.lua_ls.setup{}
 require'lspconfig'.cmake.setup{}
 -- require'lspconfig'.rust_analyzer.setup{}
 
-require('lspconfig').clangd.setup{
+require('lspconfig').clangd.setup {
     on_attach = clangd_on_attach,
     on_new_config = function(new_config, new_cwd)
-        local status, cmake = pcall(require, "cmake-tools")
-        if status then
-            cmake.clangd_on_new_config(new_config)
-        end
+      local ok, cmake = pcall(require, "cmake-tools")
+      if ok then cmake.clangd_on_new_config(new_config) end
+  
+      local ft = vim.bo.filetype
+      if ft == 'cuda' or ft == 'cu' then
+        new_config.init_options = new_config.init_options or {}
+        new_config.init_options.fallbackFlags = {
+          "-xcuda",
+          "-nocudalib",
+          "-nocudainc",
+          "-I/Users/keter/Documents/cudart/",
+        }
+      end
     end,
-}
+  }
 
 -- vim.api.nvim_set_hl(0, 'LspReferenceRead', {link = 'Search'})
 -- vim.api.nvim_set_hl(0, 'LspReferenceText', {link = 'Search'})

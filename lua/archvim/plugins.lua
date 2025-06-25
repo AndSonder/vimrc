@@ -1,4 +1,44 @@
 local plugins = {
+    {
+        "kawre/leetcode.nvim",
+        dependencies = {
+            "nvim-telescope/telescope.nvim",
+            "nvim-lua/plenary.nvim",
+            "MunifTanjim/nui.nvim",
+        },
+        config = function()
+            require("leetcode").setup({
+                lang = "cpp",
+                -- 打开题目时插入头文件
+                hooks = {
+                    after_open = function(bufnr, meta)
+                        if meta.lang == "cpp" then
+                            local header = {
+                                "#include <bits/stdc++.h>",
+                                "using namespace std;",
+                                "",
+                            }
+                            vim.api.nvim_buf_set_lines(bufnr, 0, 0, false, header)
+                        end
+                    end,
+                    before_code = function(code, meta)
+                        if meta.lang == "cpp" then
+                            return "#include <bits/stdc++.h>\nusing namespace std;\n\n" .. code
+                        end
+                        return code
+                    end,
+                },
+                storage = {
+                    solution = "~/leetcode/solutions", -- 自动保存你的做题代码
+                },
+                cn = {
+                    enabled = true,        -- 如果你用的是 leetcode.cn
+                    translator = true,     -- 开启题目翻译
+                },
+            })
+        end,
+        cmd = { "LeetCode", "Leet" },
+    },
     -- plugin utilities
     'wbthomason/packer.nvim',
     "nvim-lua/popup.nvim",
