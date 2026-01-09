@@ -25,7 +25,7 @@ install_snap() {
 
 fix_nvim_appimage() {
     sudo mv /usr/bin/nvim /usr/bin/.nvim.appimage.noextract
-    echo 'x=$$; mkdir -p /tmp/_nvim_appimg_.$x && bash -c "cd /tmp/_nvim_appimg_.$x && /usr/bin/.nvim.appimage.noextract --appimage-extract > /dev/null 2>&1" && /tmp/_nvim_appimg_.$x/squashfs-root/AppRun "$@"; y=$?; rm -rf /tmp/_nvim_appimg_.$x exit $y' | sudo tee /usr/bin/nvim
+    echo 'x=$$; mkdir -p /tmp/_nvim_appimg_.$x && bash -c "cd /tmp/_nvim_appimg_.$x && /usr/bin/.nvim.appimage.noextract --appimage-extract > /dev/null 2>&1" && /tmp/_nvim_appimg_.$x/squashfs-root/AppRun "$@"; ret=$?; rm -rf /tmp/_nvim_appimg_.$x; exit $ret' | sudo tee /usr/bin/nvim
     sudo chmod +x /usr/bin/nvim
     # echo exec \"\$@\" > /bin/sudo; chmod +x /bin/sudo
 }
@@ -39,11 +39,11 @@ if [ "x$(uname -sm)" = "xLinux x86_64" ]; then
     test -f /usr/bin/nvim && sudo mv /usr/bin/nvim /tmp/.nvim-executable-backup || true
     sudo cp ./nvim.appimage /usr/bin/nvim
     /usr/bin/nvim --version || fix_nvim_appimage
-if [ "x$(uname -sm)" = "xLinux aarch64" ]; then
+elif [ "x$(uname -sm)" = "xLinux aarch64" ]; then
     if which snap >/dev/null 2>&1; then
         sudo snap remove nvim || true
     fi
-    curl -SL https://github.com/neovim/neovim/releases/latest/download/nvim-linux-arm64.appimage -o ~/.config/nvim/nvim.appimage
+    curl -SL https://github.com/neovim/neovim/releases/latest/download/nvim-linux-arm64.appimage -o ./nvim.appimage
     sudo chmod +x ./nvim.appimage
     test -f /usr/bin/nvim && sudo mv /usr/bin/nvim /tmp/.nvim-executable-backup || true
     sudo cp ./nvim.appimage /usr/bin/nvim

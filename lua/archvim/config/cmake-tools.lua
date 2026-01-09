@@ -77,7 +77,7 @@ require("cmake-tools").setup {
                 -- direction = "tab", -- 'vertical' | 'horizontal' | 'tab' | 'float'
                 -- close_on_exit = false, -- whether close the terminal when exit
                 direction = "vertical", -- 'vertical' | 'horizontal' | 'tab' | 'float'
-                close_on_exit = true, -- whether close the terminal when exit
+                close_on_exit = false, -- whether close the terminal when exit (IMPORTANT)
                 singleton = true, -- single instance, autocloses the opened one, if present
                 auto_scroll = false, -- whether auto scroll to the bottom
             },
@@ -444,6 +444,10 @@ function scratch.append(cmd)
             vim.api.nvim_buf_set_lines(scratch.buffer, -1, -1, false, { cmd })
         end
     end)
+end
+
+local utils = require'cmake-tools.utils'
+function utils.softlink(src, target)
 end
 
 -- vim.cmd [[
